@@ -1,0 +1,39 @@
+@startuml
+
+partition "**Blink LED using FSM (Simple Flow)**"{
+start
+
+: Initialize the LED;
+: Create two states to ON and OFF the LED;
+
+if (Is Current State Initial?) then (Yes)
+
+while (Is new state not Final?) is (Yes)
+
+if (Is new state is ON?) then (Yes)
+: Make the LED output HIGH;
+else if (Is new state is OFF?) then (Yes)
+: Make the LED output LOW;
+else if (Is new state No-Change?) then (Yes)
+    if (is current state HIGH) then (Yes)
+    : Make the new state as HIGH;
+    else (No)
+    : Make the new state as LOW;
+    endif
+
+else if (Is new state Final?) then (Yes)
+: Make the new state as LOW and Terminate the Process;
+
+stop
+
+endif
+
+endwhile
+: Make the new state as LOW and Terminate the Process;
+
+endif
+
+stop
+}
+
+@enduml
