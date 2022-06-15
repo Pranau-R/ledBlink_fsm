@@ -24,11 +24,14 @@ Author:
 
 using namespace McciCatena;
 
-class glowLED
+class BlinkLED
     {
 public:
-    glowLED()
-        {}
+    BlinkLED(Catena &myCatena, StatusLED &blink)
+        {
+        : m_Catena(myCatena),
+          m_Led(blink)
+        }
         
     enum state
         {
@@ -43,7 +46,7 @@ public:
     void begin()
         {
         if (! this->m_fRunning)
-            this->m_fsm.init(*this, &glowLED::fsmDispatch);
+            this->m_fsm.init(*this, &BlinkLED::fsmDispatch);
         else
             this->m_Catena.SafePrintf("already running!\n");
         }
@@ -91,7 +94,7 @@ public:
 
 private:
     // the FSM instance
-   cFSM<glowLED, state> m_fsm;
+   cFSM<BlinkLED, state> m_fsm;
 
     // verify that FSM is running, and print a message if not.
     bool checkRunning() const
@@ -247,8 +250,8 @@ Catena gCatena;
 // instantiate the LED object
 StatusLed gLed (Catena::PIN_STATUS_LED);
 
-// instantiate the turnstile
-glowLED gglowLED ();
+// instantiate the BlinkLED
+BlinkLED gBlinkLED (gCatena, gLed);
 
 // forward reference to the command function
 cCommandStream::CommandFn cmdOn;
@@ -260,8 +263,8 @@ cCommandStream::CommandFn cmdEnd;
 static const cCommandStream::cEntry sMyExtraCommmands[] =
     {
     { "begin", cmdBegin },
-    { "on", cmdCoin },
-    { "off", cmdPush },
+    { "on", cmdOn },
+    { "off", cmdOff },
     { "end", cmdEnd },
     // other commands go here....
     };
@@ -309,7 +312,7 @@ void setup()
 
     gLed.begin();
     gCatena.registerObject(&gLed);
-    gTurnstile.begin();
+    gBlinkLED.begin();
     }
 
 // loop is called repeatedly.
@@ -338,7 +341,7 @@ cCommandStream::CommandStatus cmdOn(
     )
     {
     pThis->printf("%s\n", argv[0]);
-    gTurnstile.evON();
+    gBlinkLED.evON();
 
     return cCommandStream::CommandStatus::kSuccess;
     }
@@ -354,7 +357,7 @@ cCommandStream::CommandStatus cmdOff(
     )
     {
     pThis->printf("%s\n", argv[0]);
-    gTurnstile.evOff();
+    gBlinkLED.evOff();
 
     return cCommandStream::CommandStatus::kSuccess;
     }
@@ -370,7 +373,7 @@ cCommandStream::CommandStatus cmdBegin(
     )
     {
     pThis->printf("%s\n", argv[0]);
-    gTurnstile.begin();
+    gBlinkLED.begin();
 
     return cCommandStream::CommandStatus::kSuccess;
     }
@@ -386,7 +389,7 @@ cCommandStream::CommandStatus cmdEnd(
     )
     {
     pThis->printf("%s\n", argv[0]);
-    gTurnstile.end();
+    gBlinkLED.end();
 
     return cCommandStream::CommandStatus::kSuccess;
     }
