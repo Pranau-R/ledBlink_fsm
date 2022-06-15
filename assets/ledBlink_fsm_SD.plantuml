@@ -1,0 +1,36 @@
+/'
+Module:	ledBlink_fsm_SD.plantuml
+
+Function:
+        PlantUML Sequence diagram for LED Blink using FSM.
+
+Copyright:
+        This file copyright (C) 2022 by
+        MCCI Corporation
+        3520 Krums Corners Road
+        Ithaca, NY 14850
+        An unpublished work. All rights reserved.
+        This file is proprietary information, and may not be disclosed or
+        copied without the prior permission of MCCI Corporation.
+
+Author:
+        Pranau R, MCCI Corporation    June 2022
+'/
+
+@startuml
+
+[*] --> stOFF : stInitial
+
+state stOFF
+state stON
+
+stOFF --> stOFF : evOFF
+stOFF : Turn OFF the LED
+stOFF --> stON : evON
+stOFF --> [*] : shutdoun\nstFinal
+
+stON --> stON : evON
+stON : Turn ON the LED
+stON --> stOFF : evOFF\nstFinal
+
+@enduml
