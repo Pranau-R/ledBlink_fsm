@@ -1,3 +1,22 @@
+/'
+Module:	ledBlink_fsm_FL.plantuml
+
+Function:
+        PlantUML flow chart for LED Blink using FSM Source.
+
+Copyright:
+        This file copyright (C) 2022 by
+        MCCI Corporation
+        3520 Krums Corners Road
+        Ithaca, NY 14850
+        An unpublished work. All rights reserved.
+        This file is proprietary information, and may not be disclosedg or
+        copied without the prior permission of MCCI Corporation.
+
+Author:
+        Pranau R, MCCI Corporation    June 2022
+'/
+
 @startuml
 
 partition "**Blink LED using FSM (Simple Flow)**"{
