@@ -19,6 +19,7 @@ Author:
 
 @startuml
 
+state LED_Blink_State_Diagram #pink {
 [*] --> stOFF : stInitial
 
 state stOFF
@@ -32,5 +33,6 @@ stOFF --> [*] : shutdoun\nstFinal
 stON --> stON : evON
 stON : Turn ON the LED
 stON --> stOFF : evOFF\nstFinal
+}
 
 @enduml
