@@ -21,19 +21,19 @@ Author:
 #include <Catena_FSM.h>
 #include <Catena_Led.h>
 #include <Catena_CommandStream.h>
+#include <Catena_CommandStream_vmicro_fixup.h>
 
 using namespace McciCatena;
 
 class BlinkLED
     {
 public:
-    BlinkLED(Catena &myCatena, StatusLED &blink)
-        {
+    BlinkLED(Catena &myCatena, StatusLed &blink)
         : m_Catena(myCatena),
           m_Led(blink)
-        }
-        
-    enum state
+        {}
+
+    enum State
         {
         stNoChange = 0, // this name must be present: indicates "no change of state"
         stInitial,      // this name must be presnt: it's the starting state.
@@ -94,7 +94,7 @@ public:
 
 private:
     // the FSM instance
-   cFSM<BlinkLED, state> m_fsm;
+    cFSM <BlinkLED, State> m_fsm;
 
     // verify that FSM is running, and print a message if not.
     bool checkRunning() const
@@ -122,7 +122,7 @@ private:
 
     State fsmDispatch(State currentState, bool fBlink)
         {
-        state newState = State::stNoChange;
+        State newState = State::stNoChange;
 
         switch (currentState)
             {
@@ -132,7 +132,7 @@ private:
                     // Initially the LED is LOW.
                     }
                 this->m_fRunning = true;
-                newState = State::sON;
+                newState = State::stOFF;
                 break;
 
             case State::stOFF:
@@ -156,7 +156,7 @@ private:
                     {
                     this->m_evOFF = false;
                     m_Led.Set(LedPattern::Off);
-                    m_Catena.SafePrintf("LED is already OFF!\n");
+                    m_Catena.SafePrintf("LED is already in OFF State!\n");
                     // stay in this state.
                     }
                 else
@@ -173,20 +173,19 @@ private:
                 if (this->m_evShutdown)
                     {
                     m_Led.Set(LedPattern::Off);
-                    newState = State::stFinal;
+                    newState = State::stOFF;
                     }
                 else if (this->m_evON)
                     {
                     this->m_evON = false;
                     m_Led.Set(LedPattern::On);
                     // stay in this state.
-                    m_Catena.SafePrintf("Already LED in ON!\n");
+                    m_Catena.SafePrintf("LED is already in ON State!\n");
                     }
-                else if (this->m_OFF)
+                else if (this->m_evOFF)
                     {
                     this->m_evOFF = false;
                     m_Led.Set(LedPattern::Off);
-                    m_Catena.SafePrintf("The LED is Turned OFF!\n");
                     newState = State::stOFF;
                     }
                 else
@@ -312,7 +311,6 @@ void setup()
 
     gLed.begin();
     gCatena.registerObject(&gLed);
-    gBlinkLED.begin();
     }
 
 // loop is called repeatedly.
@@ -357,7 +355,7 @@ cCommandStream::CommandStatus cmdOff(
     )
     {
     pThis->printf("%s\n", argv[0]);
-    gBlinkLED.evOff();
+    gBlinkLED.evOFF();
 
     return cCommandStream::CommandStatus::kSuccess;
     }
